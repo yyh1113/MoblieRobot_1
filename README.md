@@ -93,10 +93,39 @@ python -m arducam_yolo_web.server
 
 ## 기여자 (Contributors)
 
-프로젝트에 기여해 주신 팀원분들입니다. (이름을 클릭하면 GitHub 프로필로 이동합니다.)
+프로젝트에 기여해 주신 팀원분들입니다. (이미지나 이름을 클릭하면 GitHub 프로필로 이동합니다.)
 
-<a href="https://github.com/uqer1244" title="uqer1244"><img src="https://github.com/uqer1244.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="uqer1244"/></a>
-<a href="https://github.com/leann805-crypto" title="leann805-crypto"><img src="https://github.com/leann805-crypto.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="leann805-crypto"/></a>
-<a href="https://github.com/Parkjihooo" title="Parkjihooo"><img src="https://github.com/Parkjihooo.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="Parkjihooo"/></a>
-<a href="https://github.com/yeonseung321" title="yeonseung321"><img src="https://github.com/yeonseung321.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="yeonseung321"/></a>
-<a href="https://github.com/yyh1113" title="yyh1113"><img src="https://github.com/yyh1113.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="yyh1113"/></a>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/uqer1244">
+        <img src="https://github.com/uqer1244.png?size=70" width="70" height="70" style="border-radius: 50%;" alt="uqer1244"/><br />
+        <sub><b>uqer1244</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/leann805-crypto">
+        <img src="https://github.com/leann805-crypto.png?size=70" width="70" height="70" style="border-radius: 50%;" alt="leann805-crypto"/><br />
+        <sub><b>leann805-crypto</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Parkjihooo">
+        <img src="https://github.com/Parkjihooo.png?size=70" width="70" height="70" style="border-radius: 50%;" alt="Parkjihooo"/><br />
+        <sub><b>Parkjihooo</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/yeonseung321">
+        <img src="https://github.com/yeonseung321.png?size=70" width="70" height="70" style="border-radius: 50%;" alt="yeonseung321"/><br />
+        <sub><b>yeonseung321</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/yyh1113">
+        <img src="https://github.com/yyh1113.png?size=70" width="70" height="70" style="border-radius: 50%;" alt="yyh1113"/><br />
+        <sub><b>yyh1113</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
