@@ -88,3 +88,15 @@ python -m arducam_yolo_web.server
 ## 예외 처리 및 폴백 안정성 설계 (Resiliency)
 * **하드웨어 통신 장애 (Fallback)**: VLM 서버가 RDK X5 엣지 단말과 통신할 수 없는 상황(통신 두절 또는 타임아웃)이 발생하면 시스템 전체가 중단되지 않고 자동 안전장치(Fallback)가 가동됩니다. 촬영에 실패한 2차 이미지 대신 모바일 기기가 직접 전송한 1차 원본 사진으로 VLM 태그 분석과 DB 이관 프로세스를 무중단 진행합니다.
 * **가상 카메라 디바이스 시뮬레이터**: 물리적인 카메라 장치(`/dev/video*`)가 감지되지 않는 런타임 환경일 경우, RDK 모듈은 자동으로 시뮬레이션 모드로 전환되어 실시간 시간 정보가 렌더링되는 가상의 더미 비디오 스트림을 안전하게 복제해 제공합니다.
+
+---
+
+## 기여자 (Contributors)
+
+프로젝트에 기여해 주신 팀원분들입니다. (이름을 클릭하면 GitHub 프로필로 이동합니다.)
+
+<a href="https://github.com/uqer1244" title="uqer1244"><img src="https://github.com/uqer1244.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="uqer1244"/></a>
+<a href="https://github.com/leann805-crypto" title="leann805-crypto"><img src="https://github.com/leann805-crypto.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="leann805-crypto"/></a>
+<a href="https://github.com/Parkjihooo" title="Parkjihooo"><img src="https://github.com/Parkjihooo.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="Parkjihooo"/></a>
+<a href="https://github.com/yeonseung321" title="yeonseung321"><img src="https://github.com/yeonseung321.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="yeonseung321"/></a>
+<a href="https://github.com/yyh1113" title="yyh1113"><img src="https://github.com/yyh1113.png?size=50" width="50" height="50" style="border-radius: 50%; margin-right: 5px;" alt="yyh1113"/></a>
