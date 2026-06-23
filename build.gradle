@@ -1,0 +1,36 @@
+apply plugin: "com.android.application"
+
+def localProps = new Properties()
+def localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { stream -> localProps.load(stream) }
+}
+
+def buildConfigString = { value ->
+    return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+}
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        applicationId "com.example.temilostfound"
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "String", "FOUND_API_BASE_URL",
+                buildConfigString(localProps.getProperty("FOUND_API_BASE_URL", "http://10.0.2.2:8080"))
+        buildConfigField "String", "SEARCH_API_BASE_URL",
+                buildConfigString(localProps.getProperty("SEARCH_API_BASE_URL", "http://10.0.2.2:8000"))
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "com.robotemi:sdk:1.137.1"
+}

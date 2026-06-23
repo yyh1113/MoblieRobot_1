@@ -1,0 +1,8 @@
+<resources>
+    <color name="temi_blue">#1769E0</color>
+    <color name="temi_green">#188B63</color>
+    <color name="temi_red">#C43B3B</color>
+    <color name="temi_text">#172033</color>
+    <color name="temi_muted">#5E6B7A</color>
+    <color name="temi_bg">#F5F7FA</color>
+</resources>
