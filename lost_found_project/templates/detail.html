@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>습득물 상세</title>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: white;
+            color: #333333;
+            padding-bottom: 100px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .header {
+            width: 100%;
+            height: 72px;
+            background: #ECECEC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 120px;
+        }
+
+        .btn-logout {
+            padding: 6px 16px;
+            background: #C1C1C1;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-logout:hover {
+            background: #a8a8a8;
+        }
+
+        .container {
+            width: 1272px;
+            margin: 40px auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 6px;
+        }
+
+        .info-layout {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .img-box {
+            width: 360px;
+            height: 360px;
+            background: #FAFAFA;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #DFDFDF;
+            position: relative;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-table {
+            flex: 1;
+            border-top: 1px solid #DFDFDF;
+        }
+
+        .info-row {
+            display: flex;
+            border-bottom: 1px solid #DFDFDF;
+        }
+
+        .info-label {
+            width: 200px;
+            background: #F7F7F7;
+            padding: 18px 20px;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-value {
+            flex: 1;
+            padding: 18px 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            line-height: 1.5;
+        }
+
+        .tags-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border: 1px solid #D4D4D4;
+            border-radius: 18px;
+            font-size: 18px;
+            color: #333333;
+        }
+
+        .receiver-box {
+            border: 1px solid #DFDFDF;
+            border-radius: 8px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 60px;
+            background: white;
+        }
+
+        .btn-action {
+            background: #2087D6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-action:hover {
+            background: #186cb0;
+        }
+
+        .matching-box {
+            border: 1px solid #DFDFDF;
+            border-radius: 8px;
+            padding: 20px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div style="font-size: 24px; font-weight: 600;">한양대학교 ERICA 캠퍼스 분실물 관리</div>
+        <div style="display: flex; gap: 14px; align-items: center;">
+            <div style="font-size: 18px; font-weight: 600; color: #333;">관리자 A</div>
+            <a href="/admin/logout" class="btn-logout">로그아웃</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div style="margin-bottom: 15px;">
+            <a href="/admin/lost-items" style="color: #2087D6; font-weight: 600;">&lt; 목록으로 돌아가기</a>
+        </div>
+        <div class="page-title">습득물 상세</div>
+
+        <div class="section-header">
+            <div class="section-title">습득물 정보</div>
+            <div class="status-badge"
+                style="background: {% if item.status == '보관중' %}#2087D6{% else %}#8D8D8D{% endif %};">
+                {{ item.status }}
+            </div>
+        </div>
+
+        <div class="info-layout">
+            <div class="img-box">
+                <img src="/static/thumbnails/{{ item.thumbnail_path }}"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="아이템">
+                <div class="thumb-placeholder"
+                    style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 18px;">
+                    (사진 없음)</div>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #111;">{{ item.item_name }}
+                </div>
+                <div class="info-table">
+                    <div class="info-row">
+                        <div class="info-label">물품 분류</div>
+                        <div class="info-value">{{ item.category }} / {{ item.sub_category }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">습득일자</div>
+                        <div class="info-value">{{ item.found_date }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">습득장소</div>
+                        <div class="info-value">{{ item.found_location_building }} - {{ item.found_location_detail }}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">관리번호</div>
+                        <div class="info-value" style="font-family: monospace; font-weight: 600;">{{
+                            item.management_number }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">특이사항</div>
+                        <div class="info-value">{{ item.detail_memo or '-' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tags-container">
+            {% for tag in item.vlm_keywords.replace(',', ' ').split() %}
+            {% if tag.strip() %}
+            <div class="tag">#{{ tag.strip() }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="section-title" style="margin-bottom: 20px;">수령자 정보</div>
+
+        {% if item.status == '보관중' %}
+        <div class="receiver-box">
+            <form action="/admin/lost-items/{{ item.id }}/release" method="POST"
+                style="width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 16px; margin: 0 auto; text-align: left;">
+                <div style="font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 20px; color: #333;">물품
+                    수령 정보 등록</div>
+
+                <div class="input-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #666;">수령인 성명</label>
+                    <input type="text" name="recipient_name" placeholder="실명을 입력하세요" required
+                        style="width: 100%; height: 48px; padding: 0 14px; border: 1px solid #DFDFDF; border-radius: 6px; font-size: 16px; outline: none; font-family: 'Pretendard', sans-serif;">
+                </div>
+
+                <div class="input-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #666;">연락처</label>
+                    <input type="text" name="recipient_phone" placeholder="예: 010-1234-5678" required
+                        style="width: 100%; height: 48px; padding: 0 14px; border: 1px solid #DFDFDF; border-radius: 6px; font-size: 16px; outline: none; font-family: 'Pretendard', sans-serif;">
+                </div>
+
+                <div class="input-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #666;">학번</label>
+                    <input type="text" name="recipient_student_id" placeholder="10자리 학번 입력" required
+                        style="width: 100%; height: 48px; padding: 0 14px; border: 1px solid #DFDFDF; border-radius: 6px; font-size: 16px; outline: none; font-family: 'Pretendard', sans-serif;">
+                </div>
+
+                <button type="submit" class="btn-action"
+                    style="width: 100%; height: 50px; background: #2087D6; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 10px; font-family: 'Pretendard', sans-serif;">완료
+                    및 저장</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="info-table" style="margin-bottom: 60px;">
+            <div class="info-row">
+                <div class="info-label">이름</div>
+                <div class="info-value" style="font-weight: 600;">{{ item.recipient_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">연락처</div>
+                <div class="info-value">{{ item.recipient_phone }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">학번</div>
+                <div class="info-value" style="font-family: monospace;">{{ item.recipient_student_id }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">수령일시</div>
+                <div class="info-value" style="color: #2087D6; font-weight: 600;">
+                    {{ item.released_at.strftime('%Y-%m-%d %H:%M:%S') if item.released_at else '-' }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="section-title">매칭 분실 신고</div>
+            <div class="matching-box">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="color: #2087D6; font-size: 20px; font-weight: 600;">매칭 승인</div>
+                    <div style="font-size: 18px;">지능형 자동 매칭 중</div>
+                </div>
+            </div>
+
+        </div>
+</body>
+
+</html>

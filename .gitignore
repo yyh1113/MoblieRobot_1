@@ -1,0 +1,24 @@
+# Python Virtual Environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE Settings
+.idea/
+.vscode/
+.DS_Store
+
+# Large AI Model Weights (Loaded locally, too heavy for Git)
+vlm/Qwen3.5-9B/
+
+# Project Local Storage & Cache
+lost_found_project/static/thumbnails/thumb_*
+lost_found_project/static/thumbnails/report_*
+*.log
+.pytest_cache/
+.coverage
+htmlcov/

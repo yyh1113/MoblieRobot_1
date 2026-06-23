@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>습득물 관리 목록</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', sans-serif; background: white; color: #333333; padding-bottom: 100px; }
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+    .wrapper { width: 1512px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+    .header { width: 100%; height: 72px; background: #ECECEC; display: flex; justify-content: space-between; align-items: center; padding: 0 120px; }
+    .header-title { font-size: 24px; font-weight: 600; }
+    .header-user { display: flex; align-items: center; gap: 14px; }
+    .btn-logout { padding: 6px 16px; background: #C1C1C1; border-radius: 6px; color: white; font-size: 16px; font-weight: 600; display: inline-block; text-align: center; }
+    .btn-logout:hover { background: #a8a8a8; }
+    
+    /* 탭 스타일 */
+    .tab-bar { width: 1272px; display: flex; border-bottom: 2px solid #DFDFDF; margin-top: 40px; }
+    .tab-item { padding: 14px 32px; font-size: 18px; font-weight: 500; color: #888888; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s ease; }
+    .tab-item:hover { color: #333333; }
+    .tab-item.active { color: #333333; font-weight: 700; border-bottom: 3px solid #333333; }
+    
+    /* 컨테이너 */
+    .container { width: 1272px; margin-top: 36px; display: flex; flex-direction: column; gap: 32px; }
+    .page-title { font-size: 28px; font-weight: 700; }
+    
+    /* 검색 필터 */
+    .filter-card { width: 100%; background: #FAFAFA; border-radius: 6px; border: 1px solid #DFDFDF; padding: 24px 32px 32px 32px; position: relative; }
+    .filter-title { font-size: 20px; font-weight: 600; color: #222222; margin-bottom: 20px; }
+    .filter-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+    .filter-row { display: flex; align-items: center; gap: 40px; }
+    .filter-group { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .filter-label { font-size: 18px; font-weight: 600; color: #333333; min-width: 80px; }
+    .select-custom { height: 48px; background: white; border-radius: 6px; border: 1px solid #DFDFDF; padding: 0 20px; font-size: 16px; color: #333333; outline: none; font-family: 'Pretendard', sans-serif; min-width: 200px; cursor: pointer; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="6" viewBox="0 0 13 6"><path d="M0 0h13L6.5 6z" fill="%238D8D8D"/></svg>'); background-repeat: no-repeat; background-position: right 20px center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 40px; }
+    .select-custom:focus { border-color: #2087D6; }
+    .filter-buttons { display: flex; justify-content: center; gap: 18px; }
+    .btn-reset { width: 99px; height: 48px; background: #C1C1C1; border-radius: 6px; color: white; font-size: 16px; font-weight: 500; border: none; cursor: pointer; font-family: 'Pretendard', sans-serif; }
+    .btn-reset:hover { background: #a8a8a8; }
+    .btn-submit { width: 99px; height: 48px; background: #2087D6; border-radius: 6px; color: white; font-size: 16px; font-weight: 500; border: none; cursor: pointer; font-family: 'Pretendard', sans-serif; }
+    .btn-submit:hover { background: #186cb0; }
+
+    /* 리스트 카운트 */
+    .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .total-count { font-size: 18px; font-weight: 600; color: #333333; }
+
+    /* 카드 그리드 */
+    .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%; }
+    .item-card { background: white; border: 1px solid #DFDFDF; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-height: 380px; transition: box-shadow 0.2s; }
+    .item-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .card-img-box { width: 100%; height: 220px; background: #FAFAFA; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #DFDFDF; font-size: 16px; position: relative; }
+    .card-thumbnail { width: 100%; height: 100%; object-fit: cover; }
+    .badge { position: absolute; top: 16px; left: 16px; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; color: white; }
+    .card-content { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .card-label { font-size: 14px; color: #888888; font-weight: 500; }
+    .card-name { font-size: 18px; font-weight: 700; color: #333333; margin-bottom: 4px; }
+    .card-info-row { display: flex; font-size: 14px; }
+    .info-label { width: 65px; color: #666666; font-weight: 600; }
+    .info-value { color: #333333; flex: 1; }
+
+    /* Empty state */
+    .empty-state { grid-column: 1 / span 4; text-align: center; padding: 80px 0; color: #888888; border: 1px dashed #DFDFDF; border-radius: 12px; font-size: 18px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <header class="header">
+    <div class="header-title">한양대학교 ERICA 캠퍼스 분실물 관리</div>
+    <div class="header-user">
+      <div style="font-size:18px; font-weight:600; color: #333;">관리자 A</div>
+      <a href="/admin/logout" class="btn-logout">로그아웃</a>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <a href="/admin/lost-items" class="tab-item active">습득물 목록</a>
+    <a href="/admin/lost-reports" class="tab-item">분실 신고 목록</a>
+  </div>
+
+  <main class="container">
+    <h1 class="page-title">습득물 관리 목록</h1>
+
+    <!-- 필터 영역 -->
+    <form class="filter-card" method="GET" action="/admin/lost-items">
+      <div class="filter-title">검색 필터</div>
+      <div class="filter-grid">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">물품 분류</span>
+            <select class="select-custom" name="category">
+              <option value="">전체 보기</option>
+              {% for cat in categories %}
+              <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">보관 상태</span>
+            <select class="select-custom" name="status_filter">
+              <option value="">전체 보기</option>
+              <option value="보관중" {% if selected_status == '보관중' %}selected{% endif %}>보관중</option>
+              <option value="수령완료" {% if selected_status == '수령완료' %}selected{% endif %}>수령완료</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="filter-buttons">
+        <button type="button" class="btn-reset" onclick="location.href='/admin/lost-items'">초기화</button>
+        <button type="submit" class="btn-submit">검색하기</button>
+      </div>
+    </form>
+
+    <div class="list-header">
+      <div class="total-count">총 {{ items|length }}건</div>
+    </div>
+
+    <!-- 카드 목록 -->
+    <div class="card-grid">
+      {% if items %}
+        {% for item in items %}
+        <a href="/admin/lost-items/{{ item.id }}" class="item-card">
+          <div class="card-img-box">
+            <span class="badge" style="background: {% if item.status == '보관중' %}#2087D6{% else %}#8D8D8D{% endif %};">
+              {{ item.status }}
+            </span>
+            <img src="/static/thumbnails/{{ item.thumbnail_path }}" class="card-thumbnail" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="물품 이미지">
+            <div class="thumb-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 16px;">(사진 없음)</div>
+          </div>
+          <div class="card-content">
+            <div class="card-label">{{ item.category }} / {{ item.sub_category }}</div>
+            <div class="card-name">{{ item.item_name }}</div>
+            <div class="card-info-row">
+              <span class="info-label">습득일자</span>
+              <span class="info-value">{{ item.found_date }}</span>
+            </div>
+            <div class="card-info-row">
+              <span class="info-label">습득장소</span>
+              <span class="info-value">{{ item.found_location_building }} - {{ item.found_location_detail }}</span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          등록된 습득물 내역이 없습니다.
+        </div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+</body>
+</html>

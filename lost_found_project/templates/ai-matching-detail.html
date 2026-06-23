@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한양대학교 ERICA 캠퍼스 분실물 관리 - AI 매칭 분석</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', sans-serif;
+    }
+    body {
+      background-color: #f7f7f7;
+      color: #333333;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    /* 메인 대시보드 보드 컨테이너 */
+    .admin-container {
+      width: 100%;
+      max-width: 1280px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.06);
+      border: 1px solid #dfdfdf;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 상단 GNB 헤더 */
+    .gnb {
+      height: 72px;
+      background: #ececec;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      border-bottom: 1px solid #d4d4d4;
+    }
+    .gnb-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .gnb-user {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .btn-logout {
+      padding: 6px 16px;
+      background: #c1c1c1;
+      color: #ffffff;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-logout:hover { background: #a8a8a8; }
+
+    /* 본문 콘텐츠 영역 */
+    .content-body {
+      padding: 40px;
+    }
+
+    /* 타이틀 섹션 */
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .btn-back {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+    .main-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    /* AI 분석 요약 배너 */
+    .ai-banner {
+      background: #edf7ff;
+      border: 1px solid #dfdfdf;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .ai-banner-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .ai-score {
+      color: #2087d6;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .ai-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ai-tag {
+      padding: 8px 16px;
+      background: #ffffff;
+      border: 1px solid #d4d4d4;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* 데이터 매칭 테이블 */
+    .match-table {
+      border: 1px solid #d4d4d4;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+    .table-row {
+      display: flex;
+      border-bottom: 1px solid #dfdfdf;
+      background: #ffffff;
+    }
+    .table-row:last-child {
+      border-bottom: none;
+    }
+    .row-label {
+      width: 200px;
+      background: #f7f7f7;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border-right: 1px solid #d4d4d4;
+      text-align: center;
+    }
+    .row-label.header-label {
+      background: #d4d4d4;
+    }
+    .row-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+    }
+    .row-content.header-content {
+      background: #f7f7f7;
+      font-weight: 600;
+      justify-content: center;
+    }
+    .row-content:nth-child(2) {
+      border-right: 1px solid #dfdfdf;
+    }
+
+    /* 이미지 컨테이너 고정 크기 */
+    .img-container {
+      width: 100%;
+      max-width: 280px;
+      aspect-ratio: 1;
+      background: #fafafa;
+      border-radius: 8px;
+      border: 1px solid #dfdfdf;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      position: relative;
+    }
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 분석 상세 키워드 태그 묶음 */
+    .analysis-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .analysis-chip {
+      padding: 6px 14px;
+      border: 1px solid #d4d4d4;
+      border-radius: 18px;
+      font-size: 15px;
+      background: #ffffff;
+    }
+
+    /* 하단 액션 버튼 바 */
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .btn {
+      padding: 12px 28px;
+      color: #ffffff;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-danger { background: #f45353; }
+    .btn-primary { background: #2087d6; }
+    .btn-secondary { background: #8d8d8d; }
+
+    /* 대화상자 모달(Modal) 레이아웃 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(34, 34, 34, 0.3);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 60px 80px 40px 80px;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0px 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+      animation: cubic-bezier(0.16, 1, 0.3, 1) fadeIn 0.4s;
+    }
+    .modal-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 16px;
+    }
+    .modal-desc {
+      font-size: 18px;
+      color: #5a5a5a;
+      line-height: 1.5;
+      margin-bottom: 36px;
+    }
+    .modal-btns {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .modal-btn {
+      width: 160px;
+      padding: 16px 0;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      border: none;
+      text-align: center;
+      display: inline-block;
+      line-height: 1.2;
+    }
+    .m-cancel { background: #aaaaaa; }
+    .m-exclude { background: #f45353; }
+    .m-approve { background: #2087d6; }
+    .m-call { background: #2087d6; text-decoration: none; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <div class="gnb">
+      <div class="gnb-title">한양대학교 ERICA 캠퍼스 분실물 관리</div>
+      <div class="gnb-user">
+        <strong>관리자 A</strong>
+        <a href="/admin/logout" class="btn-logout">로그아웃</a>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <div class="title-area">
+        <button class="btn-back" onclick="location.href='/admin/lost-reports/{{ report.id }}'">
+          <svg width="12" height="20" viewBox="0 0 12 20" fill="none"><path d="M11 1L2 10L11 19" stroke="#6C6C6C" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <span style="font-size: 20px; font-weight: 600; color: #6c6c6c; cursor: pointer;" onclick="location.href='/admin/lost-reports/{{ report.id }}'">AI 매칭 분석</span>
+      </div>
+      <h1 class="main-title">같은 물건이 맞는지 확인해 주세요</h1>
+
+      <div class="ai-banner">
+        <div class="ai-banner-top">
+          <span style="color: #2087d6; font-size: 20px; font-weight: 600;">AI 매칭 분석 결과</span>
+          <span class="ai-score">{{ match_rate }}% 일치</span>
+        </div>
+        <div class="ai-tags">
+          {% for hl in highlights %}
+          <div class="ai-tag">{{ hl }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="match-table">
+        <div class="table-row">
+          <div class="row-label header-label">물품 유형</div>
+          <div class="row-content header-content">분실물 (신고)</div>
+          <div class="row-content header-content">습득물 (보관)</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">물품명</div>
+          <div class="row-content" style="font-weight: 700; font-size: 20px; color: #111;">{{ report.item_name }}</div>
+          <div class="row-content" style="font-weight: 700; font-size: 20px; color: #111;">{{ item.item_name }}</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">이미지</div>
+          <div class="row-content">
+            <div class="img-container">
+              {% if report.image_path %}
+              <img src="/static/thumbnails/{{ report.image_path }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="분실물 이미지">
+              <div class="thumb-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 16px;">(사진 없음)</div>
+              {% else %}
+              <div class="thumb-placeholder" style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 16px;">(사진 없음)</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row-content">
+            <div class="img-container">
+              <img src="/static/thumbnails/{{ item.thumbnail_path }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="습득물 가방">
+              <div class="thumb-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 16px;">(사진 없음)</div>
+            </div>
+          </div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">물품 분류</div>
+          <div class="row-content">{{ report.category }}</div>
+          <div class="row-content">{{ item.category }} / {{ item.sub_category }}</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">일자</div>
+          <div class="row-content">{{ report.start_date }} ~ {{ report.end_date }}</div>
+          <div class="row-content">{{ item.found_date }}</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">장소</div>
+          <div class="row-content">{{ report.lost_building }} - {{ report.lost_detail }}</div>
+          <div class="row-content">{{ item.found_location_building }} - {{ item.found_location_detail }}</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">특이사항</div>
+          <div class="row-content" style="line-height: 1.6;">{{ report.unique_features }}</div>
+          <div class="row-content" style="line-height: 1.6;">{{ item.detail_memo or '-' }}</div>
+        </div>
+        <div class="table-row">
+          <div class="row-label">AI 분석 키워드</div>
+          <div class="row-content">
+            <div class="analysis-tags">
+              {% if extracted_keywords %}
+                {% for kw in extracted_keywords %}
+                <span class="analysis-chip">#{{ kw }}</span>
+                {% endfor %}
+              {% else %}
+                <span style="color: #999; font-size: 14px;">추출 특징 없음</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row-content">
+            <div class="analysis-tags">
+              {% if item_tags %}
+                {% for tag in item_tags %}
+                <span class="analysis-chip">#{{ tag }}</span>
+                {% endfor %}
+              {% else %}
+                <span style="color: #999; font-size: 14px;">VLM 특징 없음</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button id="open-exclude" class="btn btn-danger">매칭 제외</button>
+        <button id="open-approve" class="btn btn-primary">매칭 승인</button>
+        <button id="open-call" class="btn btn-secondary">전화하기 (확인)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-overlay" class="modal-overlay">
+    
+    <!-- 모달 1: 매칭 제외 -->
+    <div id="m-card-exclude" class="modal-card" style="display: none;">
+      <h2 class="modal-title">매칭 후보에서 제외할까요?</h2>
+      <p class="modal-desc">해당 습득물은 해당 신고와 연결되지 않아요.<br>제외하면 추천 카드 리스트에서 보이지 않게 됩니다.</p>
+      <div class="modal-btns">
+        <button class="modal-btn m-cancel btn-close">취소</button>
+        <form action="/admin/lost-reports/{{ report.id }}/exclude" method="POST" style="display: inline-block;">
+          <input type="hidden" name="lost_item_id" value="{{ item.id }}">
+          <button type="submit" class="modal-btn m-exclude">매칭 제외</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 모달 2: 매칭 승인 -->
+    <div id="m-card-approve" class="modal-card" style="display: none;">
+      <h2 class="modal-title">분실 신고와 습득물을 매칭할까요?</h2>
+      <p class="modal-desc">매칭 승인 후 분실 신고와 습득물이 연결돼요.<br>해당 습득물은 수령 완료 상태로 업데이트됩니다.</p>
+      <div class="modal-btns">
+        <button class="modal-btn m-cancel btn-close">취소</button>
+        <form action="/admin/lost-reports/{{ report.id }}/match-confirm" method="POST" style="display: inline-block;">
+          <input type="hidden" name="lost_item_id" value="{{ item.id }}">
+          <button type="submit" class="modal-btn m-approve">매칭 승인</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 모달 3: 전화 걸기 -->
+    <div id="m-card-call" class="modal-card" style="display: none;">
+      <h2 class="modal-title">신고자에게 연락할까요?</h2>
+      <p class="modal-desc">신고자 성함: {{ report.reporter_name }}<br>연락처: {{ report.reporter_phone }}</p>
+      <div class="modal-btns">
+        <button class="modal-btn m-cancel btn-close">취소</button>
+        <a href="tel:{{ report.reporter_phone }}" class="modal-btn m-call">전화 연결</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const overlay = document.getElementById('modal-overlay');
+    const mExclude = document.getElementById('m-card-exclude');
+    const mApprove = document.getElementById('m-card-approve');
+    const mCall = document.getElementById('m-card-call');
+
+    function closeModals() {
+      overlay.style.display = 'none';
+      mExclude.style.display = 'none';
+      mApprove.style.display = 'none';
+      mCall.style.display = 'none';
+    }
+
+    function showModal(targetCard) {
+      overlay.style.display = 'flex';
+      targetCard.style.display = 'block';
+    }
+
+    // 각각의 하단 액션 버튼 이벤트 연결
+    document.getElementById('open-exclude').addEventListener('click', () => showModal(mExclude));
+    document.getElementById('open-approve').addEventListener('click', () => showModal(mApprove));
+    document.getElementById('open-call').addEventListener('click', () => showModal(mCall));
+
+    // 닫기 버튼 공통 지정
+    document.querySelectorAll('.btn-close').forEach(btn => {
+      btn.addEventListener('click', closeModals);
+    });
+
+    // 배경 클릭 시 닫히게 처리
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) closeModals();
+    });
+  </script>
+</body>
+</html>

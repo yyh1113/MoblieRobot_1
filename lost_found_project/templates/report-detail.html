@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>한양대학교 ERICA 캠퍼스 분실물 관리</title>
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Pretendard', sans-serif;
+            background: #FFF;
+            color: #333;
+            padding-bottom: 100px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            width: 100%;
+            height: 72px;
+            background: #ECECEC;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 120px;
+            box-sizing: border-box;
+        }
+
+        .btn-logout {
+            padding: 6px 16px;
+            background: #C1C1C1;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .btn-logout:hover {
+            background: #a8a8a8;
+        }
+
+        .container {
+            width: 1272px;
+            margin: 0 auto;
+            padding-top: 36px;
+            position: relative;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 500;
+            color: #333;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 테이블 스타일 */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            border-top: 1px solid #DFDFDF;
+        }
+
+        .info-table td {
+            height: 60px;
+            border-bottom: 1px #DFDFDF solid;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .info-table .label {
+            width: 200px;
+            background: #F7F7F7;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .info-table .content {
+            padding-left: 20px;
+        }
+
+        /* 분실물 정보 레이아웃 */
+        .item-info-container {
+            display: flex;
+            gap: 24px;
+        }
+
+        .item-image {
+            width: 360px;
+            height: 360px;
+            background: #FAFAFA;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #DFDFDF;
+            position: relative;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* AI 매칭 공통 헤더 */
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .ai-title {
+            color: #2087D6;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .ai-tooltip {
+            padding: 12px 24px;
+            background: white;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.10);
+            border-radius: 8px;
+            color: #5A5A5A;
+            font-size: 14px;
+            border: 1px solid #DFDFDF;
+        }
+
+        /* Case 1: 매칭 결과 없음 */
+        .no-match-box {
+            width: 100%;
+            height: 80px;
+            border-radius: 8px;
+            border: 1px #DFDFDF solid;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #C1C1C1;
+            font-size: 18px;
+            margin-top: 10px;
+            background: #FAFAFA;
+        }
+
+        /* Case 2: 매칭 카드 그리드 */
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 15px;
+        }
+
+        .match-card {
+            border: 1px #DFDFDF solid;
+            border-radius: 8px;
+            padding: 24px;
+            background: #FFF;
+            transition: box-shadow 0.2s;
+        }
+
+        .match-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .card-rate {
+            color: #2087D6;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .card-img-box {
+            width: 240px;
+            height: 240px;
+            background: #FAFAFA;
+            border-radius: 8px;
+            margin: 0 auto 20px auto;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #DFDFDF;
+            position: relative;
+        }
+
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+            height: 90px;
+            align-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .match-tag {
+            padding: 6px 16px;
+            border-radius: 18px;
+            border: 1px #D4D4D4 solid;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .btn-review {
+            width: 140px;
+            height: 48px;
+            background: #2087D6;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-review:hover {
+            background: #186cb0;
+        }
+
+        /* Case 3 & 4: 매칭 완료 고정 바 */
+        .approved-box {
+            width: 100%;
+            height: 80px;
+            padding: 0 36px;
+            border-radius: 8px;
+            border: 1px #DFDFDF solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            margin-top: 10px;
+            background: #FAFAFA;
+        }
+
+        .approved-left {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .status-badge {
+            color: #2087D6;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .info-text-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .divider {
+            color: #C1C1C1;
+        }
+
+        .detail-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #5A5A5A;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .arrow-icon {
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #C1C1C1;
+            border-right: 2px solid #C1C1C1;
+            transform: rotate(45deg);
+        }
+
+        .btn-action-small {
+            background: #2087D6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .btn-action-small:hover {
+            background: #186cb0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 상단 바 -->
+    <div class="navbar">
+        <div style="font-size: 24px; font-weight: 600; color: #333;">한양대학교 ERICA 캠퍼스 분실물 관리</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 18px; font-weight: 600; color: #333;">관리자 A</span>
+            <a href="/admin/logout" class="btn-logout">로그아웃</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 페이지 타이틀 -->
+        <div class="page-title">
+            <div style="width: 20px; height: 20px; border-left: 3px solid #6C6C6C; border-bottom: 3px solid #6C6C6C; transform: rotate(45deg); margin-right: 10px; cursor: pointer;"
+                onclick="location.href='/admin/lost-reports'"></div>
+            <span>분실 신고 상세</span>
+        </div>
+
+        <!-- 신고자 정보 섹션 -->
+        <div class="section-title">
+            <span>신고자 정보</span>
+            <span
+                style="color: {% if report.matching_status == '매칭완료' %}#2087D6{% else %}#C1C1C1{% endif %}; font-size: 20px; font-weight: 600;">
+                {{ report.matching_status }}
+            </span>
+        </div>
+        <table class="info-table">
+            <tr>
+                <td class="label">이름</td>
+                <td class="content" style="width: 35%;">{{ report.reporter_name }}</td>
+                <td class="label">연락처</td>
+                <td class="content" style="font-family: monospace;">{{ report.reporter_phone }}</td>
+            </tr>
+            <tr>
+                <td class="label">학번</td>
+                <td class="content" style="font-family: monospace;">{{ report.reporter_student_id }}</td>
+                <td class="label">신고일시</td>
+                <td class="content">
+                    {{ report.report_time_clock.strftime('%Y-%m-%d %H:%M:%S') if report.report_time_clock else '-' }}
+                </td>
+            </tr>
+        </table>
+
+        <!-- 분실물 정보 섹션 -->
+        <div class="section-title">분실물 정보</div>
+        <div class="item-info-container">
+            <div class="item-image">
+                {% if report.image_path %}
+                <img src="/static/thumbnails/{{ report.image_path }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="분실물 이미지">
+                <div class="item-img-placeholder" style="display: none; font-size: 18px; color: #8D8D8D;">(사진 없음)</div>
+                {% else %}
+                <div class="item-img-placeholder" style="font-size: 18px; color: #8D8D8D;">(사진 없음)</div>
+                {% endif %}
+            </div>
+            <div style="flex: 1;">
+                <div style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 15px;">{{ report.item_name }}
+                </div>
+                <table class="info-table" style="margin-bottom: 0;">
+                    <tr>
+                        <td class="label" style="height: 50px;">물품 분류</td>
+                        <td class="content">{{ report.category }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="height: 50px;">분실기간</td>
+                        <td class="content">{{ report.start_date }} ~ {{ report.end_date }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="height: 50px;">분실장소</td>
+                        <td class="content">{{ report.lost_building }} - {{ report.lost_detail }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="height: 50px;">특이사항</td>
+                        <td class="content">{{ report.unique_features }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="height: 50px;">신청번호</td>
+                        <td class="content" style="font-family: monospace; font-weight: 600; color: #f59e0b;">{{
+                            report.report_number }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- AI 추출 키워드 뱃지 표시 영역 -->
+        {% if extracted_keywords %}
+        <div style="margin-top: 25px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-size: 14px; font-weight: 600; color: #666; margin-right: 10px;">AI 추출 물리적 특징</span>
+            {% for kw in extracted_keywords %}
+            <span
+                style="padding: 4px 12px; background: rgba(32, 135, 214, 0.1); border: 1px solid rgba(32, 135, 214, 0.25); border-radius: 12px; font-size: 14px; color: #2087D6; font-weight: 600;">#{{
+                kw }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 하단 조건별 매칭 결과 렌더링 파트 -->
+        {% if report.matching_status == '매칭완료' or case == 4 %}
+        <!-- 4️⃣ [CASE 4] 매칭 완료 고정 바 영역 -->
+        <div class="section-title">매칭 습득물</div>
+        {% if matched_items and matched_items[0] %}
+        <div class="approved-box">
+            <div class="approved-left">
+                <div class="status-badge" style="color: #2087D6;">인도 완료</div>
+                <div class="info-text-group">
+                    <span style="font-weight: 700;">{{ matched_items[0].item_name }}</span>
+                    <span class="divider">|</span>
+                    <span>{{ matched_items[0].found_location_building }} - {{ matched_items[0].found_location_detail
+                        }}</span>
+                    <span class="divider">|</span>
+                    <span>수령자: {{ matched_items[0].recipient_name or report.reporter_name }}</span>
+                </div>
+            </div>
+            <a href="/admin/lost-items/{{ matched_items[0].id }}" class="detail-link-btn">
+                <span>습득물 상세보기</span>
+                <div class="arrow-icon"></div>
+            </a>
+        </div>
+        {% endif %}
+
+        {% elif case == 3 and report.matching_status == '매칭대기' %}
+        <!-- 3️⃣ [CASE 3] 자동승인 권장 바 영역 -->
+        <div class="section-title">매칭 습득물 (AI 자동 승인 권장)</div>
+        {% if matched_items and matched_items[0] %}
+        <div class="approved-box" style="border-color: #10B981; background: #f0fdf4;">
+            <div class="approved-left">
+                <div class="status-badge" style="color: #10B981;">신뢰도 {{ matched_items[0].match_rate }}%</div>
+                <div class="info-text-group">
+                    <span style="font-weight: 700;">{{ matched_items[0].name }}</span>
+                    <span class="divider">|</span>
+                    <span>{{ matched_items[0].found_location_building }} - {{ matched_items[0].found_location_detail
+                        }}</span>
+                </div>
+            </div>
+
+            <form action="/admin/lost-reports/{{ report.id }}/match-confirm" method="POST"
+                style="display: flex; align-items: center; gap: 15px;">
+                <input type="hidden" name="lost_item_id" value="{{ matched_items[0].id }}">
+                <button type="submit" class="btn-action-small" style="background: #10B981;">자동 승인 확정</button>
+                <a href="/admin/lost-items/{{ matched_items[0].id }}" class="detail-link-btn">
+                    <span>상세보기</span>
+                    <div class="arrow-icon"></div>
+                </a>
+            </form>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- 1️⃣, 2️⃣ [CASE 1 & 2] 매칭 전 AI 분석 화면 -->
+        <div class="ai-header">
+            <span class="ai-title">AI 매칭</span>
+            <div class="ai-tooltip">
+                신고 정보와 유사한 습득물을 자동으로 분석했어요. 매칭 분석 결과를 확인한 뒤 직접 승인해 주세요.
+            </div>
+        </div>
+
+        {% if case == 1 %}
+        <!-- [CASE 1] 결과 데이터가 없을 때 -->
+        <div class="no-match-box">
+            매칭된 습득물이 없어요
+        </div>
+        {% elif case == 2 %}
+        <!-- [CASE 2] 추천 카드가 존재할 때 -->
+        <div class="match-grid">
+            {% for item in matched_items %}
+            <div class="match-card">
+                <div class="card-header">
+                    <div class="card-title">{{ item.name }}</div>
+                    <div class="card-rate">{{ item.match_rate }}% 일치</div>
+                </div>
+                <div class="card-img-box">
+                    <img src="{{ item.image }}"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        alt="습득물 이미지">
+                    <div class="thumb-placeholder"
+                        style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #FAFAFA; color: #8D8D8D; font-size: 16px;">
+                        (사진 없음)</div>
+                </div>
+                <div class="tag-container">
+                    {% for tag in item.tags %}
+                    <div class="match-tag">#{{ tag }}</div>
+                    {% endfor %}
+                </div>
+
+                <a href="/admin/lost-reports/{{ report.id }}/compare/{{ item.id }}" class="btn-review">검토하기</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endif %}
+
+    </div>
+</body>
+
+</html>

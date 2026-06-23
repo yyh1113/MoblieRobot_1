@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>분실 신고 목록</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', sans-serif; background: white; color: #333333; padding-bottom: 100px; }
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+    
+    .wrapper { width: 1512px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; position: relative; }
+    
+    /* 헤더 스타일 */
+    .header { width: 100%; height: 72px; background: #ECECEC; display: flex; justify-content: space-between; align-items: center; padding: 0 120px; }
+    .header-title { font-size: 24px; font-weight: 600; color: #333333; }
+    .header-user { display: flex; align-items: center; gap: 14px; }
+    .user-name { font-size: 18px; font-weight: 600; color: #333333; }
+    .btn-logout { padding: 6px 16px; background: #C1C1C1; border-radius: 6px; color: white; font-size: 16px; display: flex; justify-content: center; align-items: center; text-decoration: none; }
+    .btn-logout:hover { background: #a8a8a8; }
+    
+    /* 탭 바 스타일 */
+    .tab-bar { width: 1272px; display: flex; margin-top: 40px; border-bottom: 1px solid #DFDFDF; }
+    .tab-item { padding: 10px 24px 16px 24px; font-size: 18px; font-weight: 400; color: #464C52; border-bottom: 2px solid transparent; transition: all 0.2s; text-decoration: none; }
+    .tab-item:hover { color: #333333; }
+    .tab-item.active { font-weight: 600; color: #1B1D1F; border-bottom: 2px solid #26282B; }
+    
+    /* 컨테이너 및 필터 */
+    .container { width: 1272px; margin-top: 32px; display: flex; flex-direction: column; gap: 32px; }
+    
+    .filter-card { width: 100%; background: #FAFAFA; border-radius: 6px; border: 1px solid #DFDFDF; padding: 24px 32px 32px 32px; position: relative; }
+    .filter-title { font-size: 20px; font-weight: 600; color: #222222; margin-bottom: 24px; }
+    .filter-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .filter-row { display: flex; align-items: center; gap: 40px; }
+    .filter-group { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .filter-label { font-size: 18px; font-weight: 600; color: #333333; min-width: 80px; }
+    
+    /* 입력 필드 스타일 */
+    .select-custom { height: 48px; background: white; border-radius: 6px; border: 1px solid #DFDFDF; padding: 0 20px; font-size: 16px; color: #333333; outline: none; font-family: 'Pretendard', sans-serif; min-width: 200px; cursor: pointer; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="6" viewBox="0 0 13 6"><path d="M0 0h13L6.5 6z" fill="%238D8D8D"/></svg>'); background-repeat: no-repeat; background-position: right 20px center; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 40px; }
+    .select-custom:focus { border-color: #2087D6; }
+    
+    /* 필터 버튼 */
+    .filter-buttons { display: flex; justify-content: center; gap: 18px; }
+    .btn-reset { width: 99px; height: 48px; background: #C1C1C1; border-radius: 6px; color: white; font-size: 16px; font-weight: 500; border: none; cursor: pointer; font-family: 'Pretendard', sans-serif; }
+    .btn-reset:hover { background: #a8a8a8; }
+    .btn-submit { width: 99px; height: 48px; background: #2087D6; border-radius: 6px; color: white; font-size: 16px; font-weight: 500; border: none; cursor: pointer; font-family: 'Pretendard', sans-serif; }
+    .btn-submit:hover { background: #186cb0; }
+    
+    /* 리스트 상단 카운트 */
+    .list-header { display: flex; justify-content: space-between; align-items: center; }
+    .total-count { font-size: 18px; font-weight: 600; color: #333333; }
+    
+    /* 분실물 리스트 아이템 구조 */
+    .list-wrapper { display: flex; flex-direction: column; gap: 18px; }
+    .item-row-card { width: 100%; height: 288px; background: white; border-radius: 8px; border: 1px solid #DFDFDF; position: relative; overflow: hidden; display: flex; padding: 24px; transition: box-shadow 0.2s; cursor: pointer; text-decoration: none; color: inherit; }
+    .item-row-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    
+    .item-img-box { width: 240px; height: 240px; background: #FAFAFA; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid #DFDFDF; position: relative; }
+    .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .item-img-placeholder { font-size: 24px; color: #333333; font-weight: 500; }
+    
+    .item-details { margin-left: 36px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 36px; }
+    .item-title { font-size: 24px; font-weight: 700; color: #333333; margin-bottom: 55px; }
+    
+    .info-grid { display: flex; gap: 100px; }
+    .info-column { display: flex; flex-direction: column; gap: 18px; }
+    .info-item { display: flex; align-items: center; gap: 12px; }
+    .info-label { font-size: 20px; font-weight: 600; color: #333333; width: 100px; }
+    .info-value { font-size: 18px; font-weight: 400; color: #333333; line-height: 24px; }
+    
+    /* 매칭 상태 우측 상단 뱃지 */
+    .status-tag { position: absolute; right: 24px; top: 24px; padding: 8px 12px; border-radius: 20px; font-size: 20px; font-weight: 600; }
+    .status-tag.success { color: #2087D6; }      /* 매칭완료 */
+    .status-tag.waiting { color: #8D8D8D; }      /* 매칭대기 */
+    
+    /* 우측 하단 링크 */
+    .btn-detail-link { position: absolute; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 6px; color: #5A5A5A; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .arrow-icon { width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; color: #8D8D8D; font-weight: bold; font-size: 18px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  
+  <header class="header">
+    <div class="header-title">한양대학교 ERICA 캠퍼스 분실물 관리</div>
+    <div class="header-user">
+      <div class="user-name">관리자 A</div>
+      <a href="/admin/logout" class="btn-logout">로그아웃</a>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <a href="/admin/lost-items" class="tab-item">습득물 목록</a>
+    <a href="/admin/lost-reports" class="tab-item active">분실 신고 목록</a>
+  </div>
+
+  <div class="container">
+    
+    <!-- 필터 영역 -->
+    <form class="filter-card" method="GET" action="/admin/lost-reports">
+      <div class="filter-title">검색 필터</div>
+      <div class="filter-grid">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">물품 분류</span>
+            <select class="select-custom" name="category">
+              <option value="">전체 보기</option>
+              {% for cat in categories %}
+              <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">매칭 상태</span>
+            <select class="select-custom" name="matching_status">
+              <option value="">전체 보기</option>
+              <option value="매칭대기" {% if selected_matching_status == '매칭대기' %}selected{% endif %}>매칭대기</option>
+              <option value="매칭완료" {% if selected_matching_status == '매칭완료' %}selected{% endif %}>매칭완료</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="filter-buttons">
+        <button type="button" class="btn-reset" onclick="location.href='/admin/lost-reports'">초기화</button>
+        <button type="submit" class="btn-submit">검색하기</button>
+      </div>
+    </form>
+    
+    <div class="list-header">
+      <div class="total-count">총 {{ reports|length }}건</div>
+    </div>
+    
+    <!-- 분실물 신고 리스트 -->
+    <div class="list-wrapper">
+      {% if reports %}
+        {% for report in reports %}
+        <a href="/admin/lost-reports/{{ report.id }}" class="item-row-card">
+          <div class="item-img-box">
+            <div class="item-img-placeholder">(분실물)</div>
+          </div>
+          <div class="item-details">
+            <div class="item-title">{{ report.item_name }}</div>
+            <div class="info-grid">
+              <div class="info-column">
+                <div class="info-item">
+                  <span class="info-label">물품 분류</span>
+                  <span class="info-value">{{ report.category }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">분실장소</span>
+                  <span class="info-value">{{ report.lost_building }} - {{ report.lost_detail }}</span>
+                </div>
+              </div>
+              <div class="info-column">
+                <div class="info-item">
+                  <span class="info-label">분실일자</span>
+                  <span class="info-value">{{ report.start_date }} ~ {{ report.end_date }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">신고자</span>
+                  <span class="info-value">{{ report.reporter_name }} ({{ report.reporter_student_id }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="status-tag {% if report.matching_status == '매칭완료' %}success{% else %}waiting{% endif %}">
+            {{ report.matching_status }}
+          </div>
+          <div class="btn-detail-link">
+            <span>상황실 제어</span>
+            <div class="arrow-icon">›</div>
+          </div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div style="text-align: center; padding: 60px 0; color: #888888; border: 1px dashed #DFDFDF; border-radius: 8px; font-size: 18px;">
+          등록된 분실 신고 내역이 없습니다.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>
